@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:customControls="clr-namespace:VirtualizedData.CustomControls;assembly=VirtualizedData"
+             x:Class="VirtualizedData.Pages.ItemsOverviewPage">
+  <ContentPage.Padding>
+    <OnPlatform x:TypeArguments="Thickness" iOS="0, 20, 0, 0" WinPhone="20,20,20,20" />
+  </ContentPage.Padding>
+  <StackLayout Orientation="Vertical">
+    <customControls:InfiniteListView x:Name="ItemsListView"
+      ItemsSource="{Binding Items}"
+      SelectedItem="{Binding SelectedItem}"
+      LoadMoreCommand="{Binding LoadNextPageCommand}">
+      <ListView.ItemTemplate>
+        <DataTemplate>
+          <ViewCell Height="140">
+            <StackLayout Padding="15,0" HeightRequest="100" Orientation="Horizontal">
+              <Label Text="{Binding Title}" />
+              <Image Source="{Binding ImageUrl}" HeightRequest="100" WidthRequest="100" Aspect="AspectFit" />
+            </StackLayout>
+          </ViewCell>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+      <ListView.Footer >
+        <Grid IsVisible="{Binding MorePagesAvailable}">
+          <StackLayout HeightRequest="80" HorizontalOptions="Fill" Orientation="Vertical" IsVisible="{Binding IsBusy}">
+            <ActivityIndicator HorizontalOptions="Center" VerticalOptions="Center" HeightRequest="40" WidthRequest="40" Color="Black" IsRunning="True"></ActivityIndicator>
+            <Label HorizontalOptions="Center" Text="Loading items..."></Label>
+          </StackLayout>
+        </Grid>
+      </ListView.Footer>
+    </customControls:InfiniteListView>
+  </StackLayout>
+</ContentPage>
