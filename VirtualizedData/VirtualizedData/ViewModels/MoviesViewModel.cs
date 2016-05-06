@@ -9,22 +9,22 @@ using System.Windows.Input;
 using DynamicData;
 using VirtualizedData.Annotations;
 using VirtualizedData.Models;
-using VirtualizedData.Service;
+using VirtualizedData.Services;
 using Xamarin.Forms;
 
 namespace VirtualizedData.ViewModels
 {
-    public class ItemsViewModel : INotifyPropertyChanged, IDisposable
+    public class MoviesViewModel : INotifyPropertyChanged, IDisposable
     {
         private readonly CompositeDisposable _cds = new CompositeDisposable();
         private readonly IDataModel _dataModel;
-        private readonly ReadOnlyObservableCollection<ItemEntryViewModel> _items;
+        private readonly ReadOnlyObservableCollection<MovieViewModel> _items;
         private bool _isBusy;
         private int _lastLoadedPage;
         private bool _morePagesAvailable;
-        private ItemEntryViewModel _selectedItem;
+        private MovieViewModel _selectedItem;
 
-        public ItemsViewModel(IDataModel dataModel)
+        public MoviesViewModel(IDataModel dataModel)
         {
             _dataModel = dataModel;
             _cds.Add(_dataModel.RemainingPages.Subscribe(OnRemainingPagesChanged));
@@ -36,9 +36,9 @@ namespace VirtualizedData.ViewModels
             _cds.Add(operations);
         }
 
-        public ReadOnlyObservableCollection<ItemEntryViewModel> Items => _items;
+        public ReadOnlyObservableCollection<MovieViewModel> Items => _items;
 
-        public ItemEntryViewModel SelectedItem
+        public MovieViewModel SelectedItem
         {
             get { return _selectedItem; }
             set
@@ -94,9 +94,9 @@ namespace VirtualizedData.ViewModels
             IsBusy = false;
         }
 
-        private ItemEntryViewModel CreateEntryViewModel(Item item)
+        private MovieViewModel CreateEntryViewModel(Movie movie)
         {
-            return new ItemEntryViewModel {ImageUrl = item.ImageUrl, Title = item.Title};
+            return new MovieViewModel {ImageUrl = movie.Poster, Title = movie.Title, Year = movie.Year};
         }
 
         [NotifyPropertyChangedInvocator]

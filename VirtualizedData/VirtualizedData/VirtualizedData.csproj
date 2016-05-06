@@ -38,21 +38,25 @@
     <Compile Include="App.cs" />
     <Compile Include="CustomControls\InfiniteListView.cs" />
     <Compile Include="Models\DataModel.cs" />
-    <Compile Include="Pages\ItemsOverviewPage.xaml.cs">
-      <DependentUpon>ItemsOverviewPage.xaml</DependentUpon>
+    <Compile Include="Pages\MoviesPage.xaml.cs">
+      <DependentUpon>MoviesPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service\FakeDataService.cs" />
-    <Compile Include="Service\IDataService.cs" />
-    <Compile Include="Service\Item.cs" />
-    <Compile Include="Service\ItemResult.cs" />
-    <Compile Include="ViewModels\ItemEntryViewModel.cs" />
-    <Compile Include="ViewModels\ItemsViewModel.cs" />
+    <Compile Include="Services\IDataService.cs" />
+    <Compile Include="Services\Movie.cs" />
+    <Compile Include="Services\MovieResponse.cs" />
+    <Compile Include="Services\MovieService.cs" />
+    <Compile Include="ViewModels\MovieViewModel.cs" />
+    <Compile Include="ViewModels\MoviesViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="DynamicData, Version=4.6.0.1132, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\DynamicData.4.6.0.1132\lib\portable-net45+winrt45+wp8+wpa81\DynamicData.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.8.0.3\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Reactive.Core, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -84,7 +88,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Pages\ItemsOverviewPage.xaml">
+    <EmbeddedResource Include="Pages\MoviesPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

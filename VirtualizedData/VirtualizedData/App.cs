@@ -8,7 +8,7 @@ namespace VirtualizedData
         public App()
         {
             // The root page of your application
-            MainPage = new ItemsOverviewPage();
+            MainPage = new MoviesPage();
         }
 
         protected override void OnStart()

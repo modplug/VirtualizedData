@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Threading.Tasks;
 using VirtualizedData.Models;
-using VirtualizedData.Service;
+using VirtualizedData.Services;
 using VirtualizedData.ViewModels;
 using Xamarin.Forms;
 
 namespace VirtualizedData.Pages
 {
-    public partial class ItemsOverviewPage : ContentPage
+    public partial class MoviesPage : ContentPage
     {
-        ItemsViewModel ViewModel => _vm ?? (_vm = BindingContext as ItemsViewModel);
-        private ItemsViewModel _vm;
+        MoviesViewModel ViewModel => _vm ?? (_vm = BindingContext as MoviesViewModel);
+        private MoviesViewModel _vm;
 
-        public ItemsOverviewPage()
+        public MoviesPage()
         {
             InitializeComponent();
-            BindingContext = new ItemsViewModel(new DataModel(new FakeDataService()));
+            BindingContext = new MoviesViewModel(new DataModel(new MovieService()));
             
         }
 
