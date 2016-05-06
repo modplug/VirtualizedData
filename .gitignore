@@ -250,3 +250,4 @@ paket-files/
 # JetBrains Rider
 .idea/
 *.sln.iml
+/VirtualizedData/VirtualizedData.Droid/Resources/Resource.Designer.cs
