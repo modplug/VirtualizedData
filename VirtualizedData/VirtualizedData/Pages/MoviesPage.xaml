@@ -13,6 +13,7 @@
       SelectedItem="{Binding SelectedItem}"
       ShowFooter="{Binding IsBusy}"
       CanLoadMorePages="{Binding MorePagesAvailable}"
+      RowHeight="50"
       LoadMoreCommand="{Binding LoadNextPageCommand}">
       <ListView.ItemTemplate>
         <DataTemplate>
@@ -21,8 +22,8 @@
               <StackLayout Orientation="Horizontal">
                 <Image Source="{Binding ImageUrl}" HeightRequest="40" WidthRequest="40" Aspect="AspectFit"/>
                 <Label Text="{Binding Title}"></Label>
+                <Label Text="{Binding Year}" HorizontalOptions="EndAndExpand" FontSize="10"></Label>
               </StackLayout>
-              <Label Text="{Binding Year}" HorizontalOptions="EndAndExpand" FontSize="10"></Label>
             </StackLayout>
           </ViewCell>
         </DataTemplate>

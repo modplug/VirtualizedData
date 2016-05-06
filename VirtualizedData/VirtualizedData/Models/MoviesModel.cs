@@ -15,6 +15,7 @@ namespace VirtualizedData.Models
         private CancellationTokenSource _cts;
         private string _query;
         private bool _searchActive;
+        private int _pageNumber;
 
 
         public MoviesModel(IDataService dataService)
@@ -30,7 +31,6 @@ namespace VirtualizedData.Models
 
         public async Task GetPage(string query, int pageNumber)
         {
-            _searchActive = true;
             if (string.IsNullOrEmpty(query))
             {
                 RemainingPages.OnNext(0);
@@ -38,6 +38,8 @@ namespace VirtualizedData.Models
                 _searchActive = false;
                 return;
             }
+            if (query == _query && pageNumber == _pageNumber)
+                return;
 
             // Cancel search
             if (_searchActive)
@@ -48,16 +50,22 @@ namespace VirtualizedData.Models
 
             try
             {
+                _searchActive = true;
                 var result = await _dataService.GetItemsAsync(query, pageNumber, _cts.Token);
                 if (_query != query)
                 {
                     _moviesInternalList.Clear();
                 }
+                _query = query;
+                _pageNumber = pageNumber;
                 if (result.Response)
                 {
                     _moviesInternalList.Edit(list => list.AddRange(result.Movies));
                     RemainingPages.OnNext(result.RemainingPages);
-                    _query = query;
+                }
+                else
+                {
+                    RemainingPages.OnNext(0);
                 }
             }
             catch (OperationCanceledException)
@@ -69,6 +77,7 @@ namespace VirtualizedData.Models
             }
             catch (Exception e)
             {
+                RemainingPages.OnNext(0);
                 Debug.WriteLine("Something unexpected happened while fetching data");
             }
             finally
