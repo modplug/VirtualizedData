@@ -3,12 +3,12 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using DynamicData;
 using VirtualizedData.Annotations;
-using VirtualizedData.Models;
 using VirtualizedData.Services;
 using Xamarin.Forms;
 
@@ -17,34 +17,45 @@ namespace VirtualizedData.ViewModels
     public class MoviesViewModel : INotifyPropertyChanged, IDisposable
     {
         private readonly CompositeDisposable _cds = new CompositeDisposable();
-        private readonly IDataModel _dataModel;
-        private readonly ReadOnlyObservableCollection<MovieViewModel> _items;
+        private readonly ReadOnlyObservableCollection<MovieViewModel> _movies;
+        private readonly IMoviesModel _moviesModel;
         private bool _isBusy;
         private int _lastLoadedPage;
         private bool _morePagesAvailable;
-        private MovieViewModel _selectedItem;
+        private string _searchText;
+        private MovieViewModel _selectedMovie;
 
-        public MoviesViewModel(IDataModel dataModel)
+        public MoviesViewModel(IMoviesModel moviesModel)
         {
-            _dataModel = dataModel;
-            _cds.Add(_dataModel.RemainingPages.Subscribe(OnRemainingPagesChanged));
-            var itemsObservable = _dataModel.Items.Connect();
+            _moviesModel = moviesModel;
+            _cds.Add(_moviesModel.RemainingPages.Subscribe(OnRemainingPagesChanged));
+            var itemsObservable = _moviesModel.Movies.Connect();
             var operations = itemsObservable
                 .Transform(CreateEntryViewModel)
-                .Bind(out _items)
+                .Bind(out _movies)
                 .Subscribe();
             _cds.Add(operations);
+
+            // Throttle search for 100ms
+            var searchTextChanged = Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
+                ev => PropertyChanged += ev,
+                ev => PropertyChanged -= ev)
+                .Where(ev => ev.EventArgs.PropertyName == "SearchText")
+                .Throttle(TimeSpan.FromMilliseconds(100))
+                .Select(args => SearchText);
+
+            _cds.Add(searchTextChanged.Subscribe(pattern => Search()));
         }
 
-        public ReadOnlyObservableCollection<MovieViewModel> Items => _items;
+        public ReadOnlyObservableCollection<MovieViewModel> Movies => _movies;
 
-        public MovieViewModel SelectedItem
+        public MovieViewModel SelectedMovie
         {
-            get { return _selectedItem; }
+            get { return _selectedMovie; }
             set
             {
-                _selectedItem = value;
-                OnPropertyChanged(nameof(SelectedItem));
+                _selectedMovie = value;
+                OnPropertyChanged(nameof(SelectedMovie));
             }
         }
 
@@ -52,6 +63,8 @@ namespace VirtualizedData.ViewModels
         {
             get { return new Command(async () => await LoadPage(_lastLoadedPage + 1)); }
         }
+
+        public ICommand SearchCommand => new Command(Search);
 
         public bool IsBusy
         {
@@ -73,6 +86,18 @@ namespace VirtualizedData.ViewModels
             }
         }
 
+        public string SearchText
+        {
+            get { return _searchText; }
+            set
+            {
+                if (_searchText == value)
+                    return;
+                _searchText = value;
+                OnPropertyChanged(nameof(SearchText));
+            }
+        }
+
         public void Dispose()
         {
             _cds.Dispose();
@@ -85,10 +110,28 @@ namespace VirtualizedData.ViewModels
             MorePagesAvailable = remainingPages != 0;
         }
 
+        private void Search()
+        {
+            Task.Run(async () =>
+            {
+                try
+                {
+                    IsBusy = true;
+                    await _moviesModel.GetPage(_searchText, 1);
+                    _lastLoadedPage = 1;
+                    IsBusy = false;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Something went wrong while searching for movie");
+                }
+            });
+        }
+
         public async Task LoadPage(int pageNumber)
         {
             IsBusy = true;
-            await _dataModel.GetPage(pageNumber);
+            await _moviesModel.GetPage(_searchText, pageNumber);
             _lastLoadedPage = pageNumber;
             Debug.WriteLine("Current page: " + pageNumber);
             IsBusy = false;

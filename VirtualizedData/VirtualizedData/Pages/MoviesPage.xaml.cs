@@ -15,7 +15,7 @@ namespace VirtualizedData.Pages
         public MoviesPage()
         {
             InitializeComponent();
-            BindingContext = new MoviesViewModel(new DataModel(new MovieService()));
+            BindingContext = new MoviesViewModel(new MoviesModel(new MovieService()));
             
         }
 

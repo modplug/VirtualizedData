@@ -7,9 +7,12 @@
     <OnPlatform x:TypeArguments="Thickness" iOS="0, 20, 0, 0" WinPhone="20,20,20,20" />
   </ContentPage.Padding>
   <StackLayout Orientation="Vertical">
+    <SearchBar Placeholder="Search for a movie title" HeightRequest="40" HorizontalOptions="FillAndExpand" TextColor="Black" SearchCommand="{Binding SearchCommand}" Text="{Binding SearchText}"></SearchBar>
     <customControls:InfiniteListView x:Name="ItemsListView"
-      ItemsSource="{Binding Items}"
+      ItemsSource="{Binding Movies}"
       SelectedItem="{Binding SelectedItem}"
+      ShowFooter="{Binding IsBusy}"
+      CanLoadMorePages="{Binding MorePagesAvailable}"
       LoadMoreCommand="{Binding LoadNextPageCommand}">
       <ListView.ItemTemplate>
         <DataTemplate>
@@ -22,17 +25,8 @@
               <Label Text="{Binding Year}" HorizontalOptions="EndAndExpand" FontSize="10"></Label>
             </StackLayout>
           </ViewCell>
-
         </DataTemplate>
       </ListView.ItemTemplate>
-      <ListView.Footer >
-        <Grid IsVisible="{Binding MorePagesAvailable}">
-          <StackLayout HeightRequest="80" HorizontalOptions="Fill" Orientation="Vertical" IsVisible="{Binding IsBusy}">
-            <ActivityIndicator HorizontalOptions="Center" VerticalOptions="Center" HeightRequest="40" WidthRequest="40" Color="Black" IsRunning="True"></ActivityIndicator>
-            <Label HorizontalOptions="Center" Text="Loading items..."></Label>
-          </StackLayout>
-        </Grid>
-      </ListView.Footer>
     </customControls:InfiniteListView>
   </StackLayout>
 </ContentPage>
